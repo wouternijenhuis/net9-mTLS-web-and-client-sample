@@ -7,11 +7,12 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
+      - "8443:8443"
     volumes:
       - ./certificates:/app/certificates:ro
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_URLS=https://+:8080
+      - ASPNETCORE_URLS=http://+:8080;https://+:8443
     networks:
       - mtls-network
 
@@ -25,6 +26,8 @@ services:
       - ./certificates:/app/certificates:ro
     networks:
       - mtls-network
+    environment:
+      - SERVER_HOST=mtls-server
     command: ["sh", "-c", "sleep 10 && dotnet MtlsClient.dll"]
 
 networks:

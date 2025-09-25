@@ -2,6 +2,7 @@
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 WORKDIR /app
 EXPOSE 8080
+EXPOSE 8443
 
 # Use the official .NET 9 SDK for building
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
@@ -17,5 +18,7 @@ RUN dotnet publish "MtlsServer.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-COPY ../certificates /app/certificates
+# Copy certificates
+COPY ../certificates/*.pfx /app/certificates/
+COPY ../certificates/*.crt /app/certificates/
 ENTRYPOINT ["dotnet", "MtlsServer.dll"]

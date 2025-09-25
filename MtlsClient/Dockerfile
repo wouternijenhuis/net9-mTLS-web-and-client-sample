@@ -16,5 +16,7 @@ RUN dotnet publish "MtlsClient.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-COPY ../certificates /app/certificates
+# Copy certificates
+COPY ../certificates/*.pfx /app/certificates/
+COPY ../certificates/*.crt /app/certificates/
 ENTRYPOINT ["dotnet", "MtlsClient.dll"]

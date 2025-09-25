@@ -10,11 +10,15 @@ try
     var clientCert = X509CertificateLoader.LoadPkcs12FromFile("../certificates/client.pfx", "password");
     Console.WriteLine($"Loaded client certificate: {clientCert.Subject}");
 
+    // Determine server host (localhost for local testing, mtls-server for Docker)
+    var serverHost = Environment.GetEnvironmentVariable("SERVER_HOST") ?? "localhost";
+    Console.WriteLine($"Connecting to server: {serverHost}");
+
     Console.WriteLine("\n=== Testing HTTP Endpoint (without mTLS) ===");
-    await TestHttpEndpoint();
+    await TestHttpEndpoint(serverHost);
 
     Console.WriteLine("\n=== Testing HTTPS Endpoint (with mTLS) ===");
-    await TestHttpsEndpoint(clientCert);
+    await TestHttpsEndpoint(serverHost, clientCert);
 
     Console.WriteLine("\n=== All tests completed successfully! ===");
 }
@@ -26,13 +30,13 @@ catch (Exception ex)
     Environment.Exit(1);
 }
 
-static async Task TestHttpEndpoint()
+static async Task TestHttpEndpoint(string serverHost)
 {
     try
     {
         // Test basic HTTP endpoint (no certificate required)
         var httpBinding = new BasicHttpBinding();
-        var httpEndpoint = new EndpointAddress("http://localhost:8080/GreetingService");
+        var httpEndpoint = new EndpointAddress($"http://{serverHost}:8080/GreetingService");
         var httpFactory = new ChannelFactory<IGreetingService>(httpBinding, httpEndpoint);
         var httpProxy = httpFactory.CreateChannel();
 
@@ -60,7 +64,7 @@ static async Task TestHttpEndpoint()
     }
 }
 
-static async Task TestHttpsEndpoint(X509Certificate2 clientCert)
+static async Task TestHttpsEndpoint(string serverHost, X509Certificate2 clientCert)
 {
     try
     {
@@ -70,7 +74,7 @@ static async Task TestHttpsEndpoint(X509Certificate2 clientCert)
         httpsBinding.Security.Mode = BasicHttpsSecurityMode.Transport;
 
         // Create endpoint address
-        var httpsEndpoint = new EndpointAddress("https://localhost:8443/GreetingService");
+        var httpsEndpoint = new EndpointAddress($"https://{serverHost}:8443/GreetingService");
 
         // Create channel factory
         var httpsFactory = new ChannelFactory<IGreetingService>(httpsBinding, httpsEndpoint);
