@@ -12,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddServiceModelServices();
 builder.Services.AddServiceModelMetadata();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddSingleton<GreetingService>();
 
 // Configure Kestrel for both HTTP and HTTPS
 builder.Services.Configure<KestrelServerOptions>(options =>
