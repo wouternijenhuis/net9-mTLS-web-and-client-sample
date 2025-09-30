@@ -74,7 +74,9 @@ dotnet run
 ```
 CoreWCF Service is running...
 HTTP endpoint: http://localhost:8080/GreetingService
+HTTP WSDL: http://localhost:8080/GreetingService?wsdl
 HTTPS endpoint: https://localhost:8443/GreetingService
+HTTPS WSDL: https://localhost:8443/GreetingService?wsdl
 info: Now listening on: http://0.0.0.0:8080
 info: Now listening on: https://0.0.0.0:8443
 ```
@@ -162,6 +164,25 @@ Client Certificate: CN=client, O=MtlsDemo, S=CA, C=US
 ### IGreetingService
 - `GetGreeting(string name)`: Basic operation, works on both HTTP/HTTPS
 - `GetSecureInfo()`: Secure operation, requires mTLS (HTTPS endpoint)
+
+### WSDL and Metadata
+The service exposes WSDL metadata for service discovery and client generation:
+
+**HTTP Endpoints:**
+- Service: `http://localhost:8080/GreetingService`
+- WSDL: `http://localhost:8080/GreetingService?wsdl`
+- Single WSDL: `http://localhost:8080/GreetingService?singleWsdl`
+
+**HTTPS Endpoints (requires mTLS):**
+- Service: `https://localhost:8443/GreetingService`
+- WSDL: `https://localhost:8443/GreetingService?wsdl`
+- Single WSDL: `https://localhost:8443/GreetingService?singleWsdl`
+
+You can use these WSDL endpoints with tools like `svcutil.exe` or `dotnet-svcutil` to generate client proxies:
+```bash
+dotnet tool install --global dotnet-svcutil
+dotnet-svcutil http://localhost:8080/GreetingService?wsdl
+```
 
 ### Security Behavior
 - HTTP endpoint: Returns message indicating no client certificate
