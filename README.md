@@ -40,9 +40,16 @@ dotnet run
 
 ### 2. Using Test Script
 
+**Linux/macOS:**
 ```bash
 # Run the automated test script
 ./test-local.sh
+```
+
+**Windows (PowerShell):**
+```powershell
+# Run the automated test script
+.\test-local.ps1
 ```
 
 ## Expected Output
@@ -158,7 +165,8 @@ docker compose up
 │   ├── server.pfx           # Server certificate
 │   └── client.pfx           # Client certificate
 ├── docker-compose.yml       # Container orchestration
-├── test-local.sh           # Automated test script
+├── test-local.sh           # Automated test script (Linux/macOS)
+├── test-local.ps1          # Automated test script (Windows/PowerShell)
 └── README.md               # This file
 ```
 
