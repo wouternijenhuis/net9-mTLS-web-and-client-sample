@@ -44,6 +44,19 @@ app.UseServiceModel(builder =>
 {
     builder.AddService<GreetingService>();
     
+    // Configure metadata behavior to enable WSDL
+    builder.ConfigureServiceHostBase<GreetingService>(host =>
+    {
+        var serviceMetadataBehavior = host.Description.Behaviors.Find<CoreWCF.Description.ServiceMetadataBehavior>();
+        if (serviceMetadataBehavior == null)
+        {
+            serviceMetadataBehavior = new CoreWCF.Description.ServiceMetadataBehavior();
+            host.Description.Behaviors.Add(serviceMetadataBehavior);
+        }
+        serviceMetadataBehavior.HttpGetEnabled = true;
+        serviceMetadataBehavior.HttpsGetEnabled = true;
+    });
+    
     // HTTP endpoint (no security)
     var httpBinding = new CoreWCF.BasicHttpBinding();
     builder.AddServiceEndpoint<GreetingService, IGreetingService>(
@@ -60,6 +73,8 @@ app.UseServiceModel(builder =>
 
 Console.WriteLine("CoreWCF Service is running...");
 Console.WriteLine("HTTP endpoint: http://localhost:8080/GreetingService");
+Console.WriteLine("HTTP WSDL: http://localhost:8080/GreetingService?wsdl");
 Console.WriteLine("HTTPS endpoint: https://localhost:8443/GreetingService");
+Console.WriteLine("HTTPS WSDL: https://localhost:8443/GreetingService?wsdl");
 
 app.Run();
