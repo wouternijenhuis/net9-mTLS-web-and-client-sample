@@ -1,5 +1,3 @@
-#!/usr/bin/env pwsh
-
 <#
 .SYNOPSIS
     Generate SSL/TLS certificates for mutual TLS (mTLS) demonstration.
@@ -30,9 +28,9 @@ try {
     if ($LASTEXITCODE -ne 0) {
         throw "OpenSSL command failed"
     }
-    Write-Host "✓ OpenSSL is available" -ForegroundColor Green
+    Write-Host "OpenSSL is available" -ForegroundColor Green
 } catch {
-    Write-Host "✗ Error: OpenSSL is not installed or not in PATH" -ForegroundColor Red
+    Write-Host "Error: OpenSSL is not installed or not in PATH" -ForegroundColor Red
     Write-Host "  Please install OpenSSL from: https://www.openssl.org/" -ForegroundColor Yellow
     exit 1
 }
@@ -41,9 +39,9 @@ try {
 $certDir = Join-Path $PSScriptRoot "certificates"
 if (-not (Test-Path $certDir)) {
     New-Item -ItemType Directory -Path $certDir | Out-Null
-    Write-Host "✓ Created certificates directory" -ForegroundColor Green
+    Write-Host "Created certificates directory" -ForegroundColor Green
 } else {
-    Write-Host "✓ Certificates directory exists" -ForegroundColor Green
+    Write-Host "Certificates directory exists" -ForegroundColor Green
 }
 
 Push-Location $certDir
@@ -66,7 +64,7 @@ function Invoke-OpenSSL {
     Invoke-Expression $cmd
     
     if ($LASTEXITCODE -ne 0) {
-        Write-Host "✗ Failed: $Description" -ForegroundColor Red
+        Write-Host "Failed: $Description" -ForegroundColor Red
         Pop-Location
         exit 1
     }
@@ -78,9 +76,9 @@ Write-Host "1. Generating Certificate Authority (CA)..." -ForegroundColor Yellow
 if (-not (Test-Path "ca.key") -or -not (Test-Path "ca.crt")) {
     Invoke-OpenSSL "genrsa -out ca.key 4096" "Generate CA private key"
     Invoke-OpenSSL "req -new -x509 -days 3650 -key ca.key -out ca.crt -subj '/C=US/ST=CA/O=MtlsDemo/CN=MtlsDemo-CA'" "Generate CA certificate"
-    Write-Host "  ✓ CA certificate created" -ForegroundColor Green
+    Write-Host "CA certificate created" -ForegroundColor Green
 } else {
-    Write-Host "  ℹ CA certificate already exists, skipping..." -ForegroundColor Gray
+    Write-Host "CA certificate already exists, skipping..." -ForegroundColor Gray
 }
 
 # 2. Generate Server certificate
@@ -90,15 +88,15 @@ if (-not (Test-Path "server.key") -or -not (Test-Path "server.crt")) {
     Invoke-OpenSSL "genrsa -out server.key 4096" "Generate server private key"
     Invoke-OpenSSL "req -new -key server.key -out server.csr -subj '/C=US/ST=CA/O=MtlsDemo/CN=localhost'" "Generate server CSR"
     Invoke-OpenSSL "x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 365 -sha256" "Sign server certificate"
-    Write-Host "  ✓ Server certificate created" -ForegroundColor Green
+    Write-Host "Server certificate created" -ForegroundColor Green
 } else {
-    Write-Host "  ℹ Server certificate already exists, skipping..." -ForegroundColor Gray
+    Write-Host "Server certificate already exists, skipping..." -ForegroundColor Gray
 }
 
 # Generate server.pfx
 Write-Host "  → Generating server.pfx..." -ForegroundColor Gray
 Invoke-OpenSSL "pkcs12 -export -out server.pfx -inkey server.key -in server.crt -certfile ca.crt -passout pass:$password" "Export server certificate to PFX"
-Write-Host "  ✓ server.pfx created" -ForegroundColor Green
+Write-Host "  server.pfx created" -ForegroundColor Green
 
 # 3. Generate Client certificate
 Write-Host ""
@@ -107,15 +105,15 @@ if (-not (Test-Path "client.key") -or -not (Test-Path "client.crt")) {
     Invoke-OpenSSL "genrsa -out client.key 4096" "Generate client private key"
     Invoke-OpenSSL "req -new -key client.key -out client.csr -subj '/C=US/ST=CA/O=MtlsDemo/CN=client'" "Generate client CSR"
     Invoke-OpenSSL "x509 -req -in client.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out client.crt -days 365 -sha256" "Sign client certificate"
-    Write-Host "  ✓ Client certificate created" -ForegroundColor Green
+    Write-Host "  Client certificate created" -ForegroundColor Green
 } else {
-    Write-Host "  ℹ Client certificate already exists, skipping..." -ForegroundColor Gray
+    Write-Host "  Client certificate already exists, skipping..." -ForegroundColor Gray
 }
 
 # Generate client.pfx
 Write-Host "  → Generating client.pfx..." -ForegroundColor Gray
 Invoke-OpenSSL "pkcs12 -export -out client.pfx -inkey client.key -in client.crt -certfile ca.crt -passout pass:$password" "Export client certificate to PFX"
-Write-Host "  ✓ client.pfx created" -ForegroundColor Green
+Write-Host "client.pfx created" -ForegroundColor Green
 
 Pop-Location
 
