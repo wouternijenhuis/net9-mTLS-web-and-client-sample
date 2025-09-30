@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace MtlsServer;
 
+[ServiceBehavior(IncludeExceptionDetailInFaults = true)]
 public class GreetingService : IGreetingService
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
