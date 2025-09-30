@@ -3,6 +3,7 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace MtlsServer;
 
+[ServiceBehavior(IncludeExceptionDetailInFaults = true)]
 public class GreetingService : IGreetingService
 {
     public string GetGreeting(string name)
