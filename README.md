@@ -23,6 +23,22 @@ This project demonstrates a complete implementation of mutual TLS (mTLS) authent
 - Docker and Docker Compose (optional)
 - OpenSSL (for certificate generation)
 
+### 0. Generate Certificates (First Time Setup)
+
+If the `.pfx` certificate files are missing, generate them using the provided scripts:
+
+**Linux/macOS:**
+```bash
+./generate-certificates.sh
+```
+
+**Windows (PowerShell):**
+```powershell
+.\generate-certificates.ps1
+```
+
+These scripts will create the required server.pfx and client.pfx files with password "password".
+
 ### 1. Local Testing
 
 ```bash
@@ -111,6 +127,22 @@ Response: Secure operation completed successfully. Connection authenticated via 
 
 ## Certificate Details
 
+### Generating Certificates
+
+Use the provided scripts to generate the required certificate files:
+
+**Linux/macOS:**
+```bash
+./generate-certificates.sh
+```
+
+**Windows (PowerShell):**
+```powershell
+.\generate-certificates.ps1
+```
+
+For more details, see [certificates/README.md](certificates/README.md).
+
 ### Generated Certificates
 ```
 CA Certificate: CN=MtlsDemo-CA, O=MtlsDemo, S=CA, C=US
@@ -122,6 +154,8 @@ Client Certificate: CN=client, O=MtlsDemo, S=CA, C=US
 - `ca.crt` / `ca.key`: Certificate Authority
 - `server.crt` / `server.key` / `server.pfx`: Server certificate
 - `client.crt` / `client.key` / `client.pfx`: Client certificate
+
+**Password:** All .pfx files use password "password"
 
 ## Service Contract
 
@@ -163,8 +197,11 @@ docker compose up
 ├── certificates/            # Generated certificates
 │   ├── ca.crt, ca.key       # Certificate Authority
 │   ├── server.pfx           # Server certificate
-│   └── client.pfx           # Client certificate
+│   ├── client.pfx           # Client certificate
+│   └── README.md            # Certificate generation instructions
 ├── docker-compose.yml       # Container orchestration
+├── generate-certificates.sh # Certificate generation script (Linux/macOS)
+├── generate-certificates.ps1 # Certificate generation script (Windows)
 ├── test-local.sh           # Automated test script (Linux/macOS)
 ├── test-local.ps1          # Automated test script (Windows/PowerShell)
 └── README.md               # This file
