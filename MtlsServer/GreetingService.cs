@@ -1,10 +1,18 @@
 using CoreWCF;
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.AspNetCore.Http;
 
 namespace MtlsServer;
 
 public class GreetingService : IGreetingService
 {
+    private readonly IHttpContextAccessor _httpContextAccessor;
+
+    public GreetingService(IHttpContextAccessor httpContextAccessor)
+    {
+        _httpContextAccessor = httpContextAccessor;
+    }
+
     public string GetGreeting(string name)
     {
         var isSecureConnection = IsSecureConnection();
@@ -28,7 +36,10 @@ public class GreetingService : IGreetingService
             throw new FaultException("Client certificate is required for this operation. Please use HTTPS endpoint.");
         }
 
-        return $"Secure operation completed successfully. Connection authenticated via mutual TLS on HTTPS endpoint.";
+        var clientCertificate = _httpContextAccessor.HttpContext?.Connection?.ClientCertificate;
+        var issuer = clientCertificate?.Issuer ?? "Unknown";
+
+        return $"Secure operation completed successfully. Connection authenticated via mutual TLS on HTTPS endpoint. Client certificate issuer: {issuer}";
     }
 
     private bool IsSecureConnection()

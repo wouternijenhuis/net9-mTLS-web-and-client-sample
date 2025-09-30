@@ -96,7 +96,7 @@ Expected error for secure operation without certificate: Client certificate is r
 1. Testing GetGreeting via HTTPS with mTLS:
 Response: Hello HTTPS mTLS Client! Connected via HTTPS with mutual TLS. Certificate validation successful at transport level.
 2. Testing GetSecureInfo via HTTPS with mTLS:
-Response: Secure operation completed successfully. Connection authenticated via mutual TLS on HTTPS endpoint.
+Response: Secure operation completed successfully. Connection authenticated via mutual TLS on HTTPS endpoint. Client certificate issuer: C=US, ST=CA, O=MtlsDemo, CN=MtlsDemo-CA
 
 === All tests completed successfully! ===
 ```
